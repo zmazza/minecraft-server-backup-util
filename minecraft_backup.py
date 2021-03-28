@@ -9,6 +9,7 @@ that zip into a destination directory.
 import shutil
 import zipfile
 import os
+import signal
 from pathlib import Path
 import time
 
@@ -37,8 +38,22 @@ def zip_dir(directory, zipname):
 
     out_zip_file.close()
 
+def kill_process():
+    """
+    Used to kill running processes.
+    This is used to stop any running servers so that they can be backed up.
+    """
+    for line in os.popen("ps ax | grep spigot | grep -v grep"):
+        fields = line.split()
+        pid = fields[0]
+        # Stopping currently running server.
+        print("Killed {}".format(int(pid)))
+        os.kill(int(pid), signal.SIGKILL)
+
 
 print("Script started...")
+print("Killing any running processes...")
+kill_process()
 
 # Directories
 ROOT_SRC_DIR = "/home/pi/minecraft-server"
@@ -101,3 +116,6 @@ while len(os.listdir(ROOT_DST_DIR)) > 2:
     file_to_remove = backups[0]
     os.remove(os.path.join(ROOT_DST_DIR, file_to_remove))
     time.sleep(2)
+
+print("Starting server...")
+os.system('java -Xms1G -Xmx1G -jar /home/pi/minecraft-server/spigot-1.16.5.jar nogui')
