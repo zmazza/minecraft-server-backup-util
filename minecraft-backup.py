@@ -1,7 +1,6 @@
 """
 Owner: Zac Mazza
 Date: 27 MAR 2021
-
 Purpose: A utility for backing up a Spigot minecraft server on a Linux machine, zipping the required folders, and loading
 that zip into a destination directory.
 """
