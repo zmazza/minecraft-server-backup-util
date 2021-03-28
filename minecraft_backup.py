@@ -23,6 +23,7 @@ def zip_dir(directory, zipname):
         # The root directory within the ZIP file.
         rootdir = os.path.basename(directory)
 
+        # pylint: disable=W0612
         for dirpath, dirnames, filenames in os.walk(directory):
             for filename in filenames:
 
