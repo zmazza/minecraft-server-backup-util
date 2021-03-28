@@ -12,6 +12,7 @@ import os
 import signal
 from pathlib import Path
 import time
+from glob import glob
 
 
 def zip_dir(directory, zipname):
@@ -101,7 +102,7 @@ time.sleep(2)
 
 # Move the zip file to the backup directory
 print("Moving zipped file...")
-shutil.move("" + zip_filename, ROOT_DST_DIR)
+shutil.move(zip_filename, ROOT_DST_DIR)
 
 # Delete the temporary directory
 print("Removing temp dir...")
@@ -110,12 +111,14 @@ time.sleep(2)
 
 # Delete the OLDEST zip over 2 backups
 print("Deleting oldest backup...")
-backups = os.listdir(ROOT_DST_DIR)
+glob_pattern = os.path.join(ROOT_DST_DIR, '*')
+
 while len(os.listdir(ROOT_DST_DIR)) > 2:
-    backups = os.listdir(ROOT_DST_DIR)
+    backups = sorted(glob(glob_pattern), key=os.path.getctime)
     file_to_remove = backups[0]
+    print("Deleting oldest file: {}".format(backups[0]))
     os.remove(os.path.join(ROOT_DST_DIR, file_to_remove))
     time.sleep(2)
 
-print("Starting server...")
+# print("Starting server...")
 os.system('java -Xms1G -Xmx1G -jar /home/pi/minecraft-server/spigot-1.16.5.jar nogui')
